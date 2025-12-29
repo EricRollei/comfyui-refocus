@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# VS Code history
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test/Debug
+*.log
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Models (don't commit large files)
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+*.gguf
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local config
+.env
+*.local

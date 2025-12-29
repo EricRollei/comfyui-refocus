@@ -1,0 +1,223 @@
+{
+  "last_node_id": 8,
+  "last_link_id": 9,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [50, 200],
+      "size": [315, 314],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [1, 2],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": ["example.png", "image"]
+    },
+    {
+      "id": 2,
+      "type": "GenfocusModelLoader",
+      "pos": [50, 50],
+      "size": [315, 130],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "pipeline",
+          "type": "GENFOCUS_PIPELINE",
+          "links": [3],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenfocusModelLoader"
+      },
+      "widgets_values": ["local:FLUX.1-dev", "bf16", "deblurNet.safetensors", "bokehNet.safetensors", false]
+    },
+    {
+      "id": 3,
+      "type": "GenfocusCondition",
+      "pos": [450, 50],
+      "size": [315, 180],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "condition",
+          "type": "GENFOCUS_CONDITION",
+          "links": [4],
+          "slot_index": 0
+        }
+      ],
+      "title": "Condition 1 (offset)",
+      "properties": {
+        "Node name for S&R": "GenfocusCondition"
+      },
+      "widgets_values": ["deblurring", 0, 32, 1.0]
+    },
+    {
+      "id": 4,
+      "type": "GenfocusCondition",
+      "pos": [450, 280],
+      "size": [315, 180],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "condition",
+          "type": "GENFOCUS_CONDITION",
+          "links": [5],
+          "slot_index": 0
+        }
+      ],
+      "title": "Condition 2 (content)",
+      "properties": {
+        "Node name for S&R": "GenfocusCondition"
+      },
+      "widgets_values": ["deblurring", 0, 0, 1.0]
+    },
+    {
+      "id": 5,
+      "type": "GenfocusGenerate",
+      "pos": [850, 100],
+      "size": [350, 400],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pipeline",
+          "type": "GENFOCUS_PIPELINE",
+          "link": 3
+        },
+        {
+          "name": "condition_1",
+          "type": "GENFOCUS_CONDITION",
+          "link": 4
+        },
+        {
+          "name": "condition_2",
+          "type": "GENFOCUS_CONDITION",
+          "link": 5
+        },
+        {
+          "name": "condition_3",
+          "type": "GENFOCUS_CONDITION",
+          "link": null
+        },
+        {
+          "name": "latents",
+          "type": "LATENT",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [6, 7],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenfocusGenerate"
+      },
+      "widgets_values": ["deblur", 1024, 1024, 28, 1.0, 42, "", "auto", false]
+    },
+    {
+      "id": 6,
+      "type": "PreviewImage",
+      "pos": [1280, 100],
+      "size": [300, 300],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 6
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      }
+    },
+    {
+      "id": 7,
+      "type": "SaveImage",
+      "pos": [1280, 450],
+      "size": [315, 100],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 7
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": ["genfocus/output"]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 3, 0, "IMAGE"],
+    [2, 1, 0, 4, 0, "IMAGE"],
+    [3, 2, 0, 5, 0, "GENFOCUS_PIPELINE"],
+    [4, 3, 0, 5, 1, "GENFOCUS_CONDITION"],
+    [5, 4, 0, 5, 2, "GENFOCUS_CONDITION"],
+    [6, 5, 0, 6, 0, "IMAGE"],
+    [7, 5, 0, 7, 0, "IMAGE"]
+  ],
+  "groups": [
+    {
+      "title": "Advanced Multi-Conditional Deblur",
+      "bounding": [30, 20, 1600, 580],
+      "color": "#3f789e"
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.9,
+      "offset": [0, 0]
+    },
+    "info": "This workflow demonstrates the advanced Genfocus Generate node with multiple conditions. The first condition uses a position offset [0, 32] to provide structural guidance, while the second condition at [0, 0] provides content. This matches the original Genfocus demo setup."
+  },
+  "version": 0.4
+}

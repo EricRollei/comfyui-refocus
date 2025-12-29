@@ -1,0 +1,109 @@
+[project]
+name = "comfyui-refocus"
+version = "0.1.0"
+description = "ComfyUI nodes for Generative Refocusing - Deblurring and Bokeh generation using FLUX LoRA adapters based on Genfocus"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [
+    { name = "ericrollei" },
+]
+keywords = [
+    "comfyui",
+    "genfocus",
+    "refocusing",
+    "bokeh",
+    "deblur",
+    "depth-of-field",
+    "flux",
+    "lora",
+    "image-processing",
+    "ai",
+    "generative",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Multimedia :: Graphics",
+]
+
+dependencies = [
+    "torch>=2.0.0",
+    "numpy>=1.24.0",
+    "Pillow>=9.0.0",
+    "safetensors>=0.4.0",
+]
+
+[project.optional-dependencies]
+native = [
+    "diffusers>=0.25.0",
+    "transformers>=4.36.0",
+    "accelerate>=0.25.0",
+    "peft>=0.7.0",
+]
+depth = [
+    "pillow-heif>=0.10.0",
+]
+all = [
+    "diffusers>=0.25.0",
+    "transformers>=4.36.0",
+    "accelerate>=0.25.0",
+    "peft>=0.7.0",
+    "pillow-heif>=0.10.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/ericRollei/comfyui-refocus"
+Repository = "https://github.com/ericRollei/comfyui-refocus"
+Documentation = "https://github.com/ericRollei/comfyui-refocus#readme"
+"Bug Tracker" = "https://github.com/ericRollei/comfyui-refocus/issues"
+"Original Genfocus" = "https://github.com/rayray9999/Genfocus"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.comfy]
+PublisherId = "ericrollei"
+DisplayName = "Refocus - Generative Refocusing"
+Icon = ""
+Description = "ComfyUI nodes for Genfocus generative refocusing. Transform any photo with controllable depth-of-field (bokeh) effects. Includes DeblurNet for all-in-focus restoration and BokehNet for realistic bokeh generation."
+Tagline = "Generative Deblurring and Bokeh Effects"
+Category = "Image Processing"
+
+[tool.comfy.models]
+[[tool.comfy.models.entries]]
+name = "deblurNet.safetensors"
+url = "https://huggingface.co/rayray9999/Genfocus/resolve/main/deblurNet.safetensors"
+path = "models/genfocus/"
+description = "DeblurNet LoRA for all-in-focus restoration"
+
+[[tool.comfy.models.entries]]
+name = "bokehNet.safetensors"
+url = "https://huggingface.co/rayray9999/Genfocus/resolve/main/bokehNet.safetensors"
+path = "models/genfocus/"
+description = "BokehNet LoRA for bokeh generation"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

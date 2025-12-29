@@ -1,0 +1,347 @@
+{
+  "last_node_id": 12,
+  "last_link_id": 14,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [50, 300],
+      "size": [315, 314],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [1, 2],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": ["example.png", "image"]
+    },
+    {
+      "id": 2,
+      "type": "GenfocusModelLoader",
+      "pos": [50, 50],
+      "size": [315, 170],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "pipeline",
+          "type": "GENFOCUS_PIPELINE",
+          "links": [3, 10],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenfocusModelLoader"
+      },
+      "widgets_values": ["local:FLUX.1-dev", "bf16", "deblurNet.safetensors", "bokehNet.safetensors", false]
+    },
+    {
+      "id": 3,
+      "type": "GenfocusDeblurNative",
+      "pos": [450, 50],
+      "size": [315, 200],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pipeline",
+          "type": "GENFOCUS_PIPELINE",
+          "link": 3
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "deblurred",
+          "type": "IMAGE",
+          "links": [4, 11],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenfocusDeblurNative"
+      },
+      "widgets_values": [28, 42, false, ""]
+    },
+    {
+      "id": 4,
+      "type": "DepthProModelLoader",
+      "pos": [50, 680],
+      "size": [315, 100],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "depth_model",
+          "type": "DEPTH_PRO_MODEL",
+          "links": [5],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DepthProModelLoader"
+      },
+      "widgets_values": ["depth_pro.pt", true]
+    },
+    {
+      "id": 5,
+      "type": "DepthProEstimate",
+      "pos": [450, 400],
+      "size": [315, 150],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "depth_model",
+          "type": "DEPTH_PRO_MODEL",
+          "link": 5
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "depth_map",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "disparity",
+          "type": "IMAGE",
+          "links": [6],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DepthProEstimate"
+      }
+    },
+    {
+      "id": 6,
+      "type": "SelectFocusPoint",
+      "pos": [850, 400],
+      "size": [315, 150],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "disparity",
+          "type": "IMAGE",
+          "link": 6
+        }
+      ],
+      "outputs": [
+        {
+          "name": "focus_disparity",
+          "type": "FLOAT",
+          "links": [7],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SelectFocusPoint"
+      },
+      "widgets_values": [0.5, 0.5]
+    },
+    {
+      "id": 7,
+      "type": "ComputeDefocusMap",
+      "pos": [850, 600],
+      "size": [315, 180],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "disparity",
+          "type": "IMAGE",
+          "link": 6
+        },
+        {
+          "name": "focus_disparity",
+          "type": "FLOAT",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "defocus_map",
+          "type": "IMAGE",
+          "links": [8],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComputeDefocusMap"
+      },
+      "widgets_values": [2.0, 100.0, "linear"]
+    },
+    {
+      "id": 8,
+      "type": "GenfocusBokehNative",
+      "pos": [1250, 300],
+      "size": [315, 250],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pipeline",
+          "type": "GENFOCUS_PIPELINE",
+          "link": 10
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 11
+        },
+        {
+          "name": "defocus_map",
+          "type": "IMAGE",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "bokeh_result",
+          "type": "IMAGE",
+          "links": [12, 13],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenfocusBokehNative"
+      },
+      "widgets_values": [28, 42, 100.0, false, ""]
+    },
+    {
+      "id": 9,
+      "type": "PreviewImage",
+      "pos": [850, 50],
+      "size": [300, 300],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 4
+        }
+      ],
+      "title": "Deblurred Preview",
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      }
+    },
+    {
+      "id": 10,
+      "type": "PreviewImage",
+      "pos": [1650, 300],
+      "size": [300, 300],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 12
+        }
+      ],
+      "title": "Bokeh Preview",
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      }
+    },
+    {
+      "id": 11,
+      "type": "SaveImage",
+      "pos": [1650, 650],
+      "size": [315, 100],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 13
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": ["bokeh/output"]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 3, 1, "IMAGE"],
+    [2, 1, 0, 5, 1, "IMAGE"],
+    [3, 2, 0, 3, 0, "GENFOCUS_PIPELINE"],
+    [4, 3, 0, 9, 0, "IMAGE"],
+    [5, 4, 0, 5, 0, "DEPTH_PRO_MODEL"],
+    [6, 5, 1, 6, 0, "IMAGE"],
+    [7, 6, 0, 7, 1, "FLOAT"],
+    [8, 7, 0, 8, 2, "IMAGE"],
+    [10, 2, 0, 8, 0, "GENFOCUS_PIPELINE"],
+    [11, 3, 0, 8, 1, "IMAGE"],
+    [12, 8, 0, 10, 0, "IMAGE"],
+    [13, 8, 0, 11, 0, "IMAGE"]
+  ],
+  "groups": [
+    {
+      "title": "1. Load Models",
+      "bounding": [30, 20, 350, 220],
+      "color": "#3f789e"
+    },
+    {
+      "title": "2. Deblur Stage",
+      "bounding": [430, 20, 500, 340],
+      "color": "#88A"
+    },
+    {
+      "title": "3. Depth Estimation",
+      "bounding": [30, 260, 800, 560],
+      "color": "#8A8"
+    },
+    {
+      "title": "4. Bokeh Generation",
+      "bounding": [1230, 260, 450, 430],
+      "color": "#A88"
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.8,
+      "offset": [0, 0]
+    }
+  },
+  "version": 0.4
+}

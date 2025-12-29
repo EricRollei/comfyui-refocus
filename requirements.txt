@@ -1,0 +1,19 @@
+# Refocus - ComfyUI Generative Refocusing
+# Base requirements (minimal)
+
+torch>=2.0.0
+numpy>=1.24.0
+Pillow>=9.0.0
+safetensors>=0.4.0
+matplotlib>=3.5.0
+
+# Native Genfocus support (recommended)
+# Uncomment for full diffusers-based pipeline:
+# diffusers>=0.25.0
+# transformers>=4.36.0
+# accelerate>=0.25.0
+# peft>=0.7.0
+
+# DepthPro support
+# Install separately: pip install git+https://github.com/apple/ml-depth-pro.git --no-deps
+# pillow-heif>=0.10.0

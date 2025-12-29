@@ -1,0 +1,86 @@
+{
+    "name": "Refocus",
+    "version": "0.1.0",
+    "description": "ComfyUI nodes for Generative Refocusing - Deblurring and Bokeh generation using FLUX LoRA adapters",
+    "author": "Based on Genfocus by NYCU CP Lab",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rayray9999/Genfocus"
+    },
+    "requirements": [
+        "torch",
+        "numpy",
+        "Pillow",
+        "safetensors"
+    ],
+    "optional_requirements": {
+        "depth_pro": {
+            "description": "Apple ml-depth-pro for high-quality depth estimation",
+            "install": "pip install git+https://github.com/apple/ml-depth-pro.git",
+            "license": "Apple Sample Code License"
+        },
+        "peft": {
+            "description": "Required for LoRA adapter switching",
+            "install": "pip install peft"
+        }
+    },
+    "models": {
+        "deblurNet.safetensors": {
+            "url": "https://huggingface.co/nycu-cplab/Genfocus-Model/resolve/main/deblurNet.safetensors",
+            "size": "17.5MB",
+            "description": "LoRA adapter for deblurring/all-in-focus restoration"
+        },
+        "bokehNet.safetensors": {
+            "url": "https://huggingface.co/nycu-cplab/Genfocus-Model/resolve/main/bokehNet.safetensors",
+            "size": "17.5MB",
+            "description": "LoRA adapter for bokeh/depth-of-field generation"
+        },
+        "depth_pro.pt": {
+            "url": "https://huggingface.co/nycu-cplab/Genfocus-Model/resolve/main/checkpoints/depth_pro.pt",
+            "size": "~500MB",
+            "description": "Apple ml-depth-pro weights for depth estimation"
+        }
+    },
+    "base_model": {
+        "name": "FLUX.1-dev",
+        "url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+        "license": "FLUX.1-dev Non-Commercial License",
+        "note": "Requires HuggingFace authentication and license acceptance"
+    },
+    "nodes": {
+        "DepthProModelLoader": {
+            "category": "Refocus/Depth",
+            "description": "Load Apple ml-depth-pro model"
+        },
+        "DepthProEstimate": {
+            "category": "Refocus/Depth",
+            "description": "Estimate metric depth from image"
+        },
+        "GenfocusLoRALoader": {
+            "category": "Refocus/LoRA",
+            "description": "Load DeblurNet and BokehNet LoRAs"
+        },
+        "DeblurNetApply": {
+            "category": "Refocus/Deblur",
+            "description": "Apply DeblurNet for all-in-focus restoration"
+        },
+        "SelectFocusPoint": {
+            "category": "Refocus/Defocus",
+            "description": "Select focus point on image"
+        },
+        "ComputeDefocusMap": {
+            "category": "Refocus/Defocus",
+            "description": "Compute defocus map from depth"
+        },
+        "BokehNetApply": {
+            "category": "Refocus/Bokeh",
+            "description": "Apply BokehNet for bokeh generation"
+        },
+        "GenfocusPipeline": {
+            "category": "Refocus/Pipeline",
+            "description": "Complete Genfocus pipeline (deblur + bokeh)"
+        }
+    }
+}
+ 
