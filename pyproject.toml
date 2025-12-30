@@ -62,10 +62,10 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ericRollei/comfyui-refocus"
-Repository = "https://github.com/ericRollei/comfyui-refocus"
-Documentation = "https://github.com/ericRollei/comfyui-refocus#readme"
-"Bug Tracker" = "https://github.com/ericRollei/comfyui-refocus/issues"
+Homepage = "https://github.com/EricRollei/comfyui-refocus"
+Repository = "https://github.com/EricRollei/comfyui-refocus"
+Documentation = "https://github.com/EricRollei/comfyui-refocus#readme"
+"Bug Tracker" = "https://github.com/EricRollei/comfyui-refocus/issues"
 "Original Genfocus" = "https://github.com/rayray9999/Genfocus"
 
 [build-system]
