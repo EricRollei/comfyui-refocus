@@ -128,8 +128,8 @@ ComfyUI/
 
 | Model | Size | License | Download |
 |-------|------|---------|----------|
-| Genfocus LoRAs | ~35MB | Apache 2.0 | [HuggingFace](https://huggingface.co/rayray9999/Genfocus) |
-| DepthPro | ~500MB | Apple Sample Code | [HuggingFace](https://huggingface.co/apple/ml-depth-pro) |
+| Genfocus LoRAs | ~35MB | Apache 2.0 | [HuggingFace](https://huggingface.co/nycu-cplab/Genfocus-Model) |
+| DepthPro | ~500MB | Apple Sample Code | [HuggingFace](https://huggingface.co/apple/DepthPro) |
 | FLUX.1-dev | ~23GB | Non-Commercial | [HuggingFace](https://huggingface.co/black-forest-labs/FLUX.1-dev) |
 
 ---

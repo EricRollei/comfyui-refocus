@@ -23,7 +23,7 @@ Genfocus LoRAs:
     - deblurNet.safetensors  (or similar name)
     - bokehNet.safetensors   (or similar name)
   
-  Download from: https://huggingface.co/rayray9999/Genfocus
+  Download from: https://huggingface.co/nycu-cplab/Genfocus-Model
 
 FLUX Diffusers Model:
   Place FLUX.1-dev in diffusers format in:

@@ -86,13 +86,13 @@ Category = "Image Processing"
 [tool.comfy.models]
 [[tool.comfy.models.entries]]
 name = "deblurNet.safetensors"
-url = "https://huggingface.co/rayray9999/Genfocus/resolve/main/deblurNet.safetensors"
+url = "https://huggingface.co/nycu-cplab/Genfocus-Model/resolve/main/deblurNet.safetensors"
 path = "models/genfocus/"
 description = "DeblurNet LoRA for all-in-focus restoration"
 
 [[tool.comfy.models.entries]]
 name = "bokehNet.safetensors"
-url = "https://huggingface.co/rayray9999/Genfocus/resolve/main/bokehNet.safetensors"
+url = "https://huggingface.co/nycu-cplab/Genfocus-Model/resolve/main/bokehNet.safetensors"
 path = "models/genfocus/"
 description = "BokehNet LoRA for bokeh generation"
 

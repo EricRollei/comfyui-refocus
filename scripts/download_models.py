@@ -132,7 +132,7 @@ def download_genfocus_loras(models_dir: Path):
         ("bokehNet.safetensors", "BokehNet LoRA"),
     ]
     
-    repo_id = "rayray9999/Genfocus"
+    repo_id = "nycu-cplab/Genfocus-Model"
     success = True
     
     for filename, description in loras:

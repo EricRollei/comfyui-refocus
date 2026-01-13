@@ -23,8 +23,8 @@ The custom node code in this repository is licensed under Apache 2.0.
 
 | Model | License | Source |
 |-------|---------|--------|
-| deblurNet.safetensors | Apache 2.0 | [HuggingFace](https://huggingface.co/rayray9999/Genfocus) |
-| bokehNet.safetensors | Apache 2.0 | [HuggingFace](https://huggingface.co/rayray9999/Genfocus) |
+| deblurNet.safetensors | Apache 2.0 | [HuggingFace](https://huggingface.co/nycu-cplab/Genfocus-Model) |
+| bokehNet.safetensors | Apache 2.0 | [HuggingFace](https://huggingface.co/nycu-cplab/Genfocus-Model) |
 
 ```
 Copyright 2025 NYCU CP Lab
