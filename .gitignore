@@ -48,3 +48,9 @@ htmlcov/
 # Local config
 .env
 *.local
+
+# Runtime cache (auto-downloaded tokenizer configs)
+.flux_cache/
+
+# Build artifacts
+node.zip

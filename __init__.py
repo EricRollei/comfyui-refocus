@@ -36,6 +36,7 @@ FLUX Diffusers Model:
 """
 
 import os
+import traceback
 import folder_paths
 
 # =============================================================================
@@ -76,6 +77,10 @@ from .nodes.defocus_map import ComputeDefocusMap, SelectFocusPoint, FocusPointFr
 from .nodes.bokeh import BokehNetApply
 
 # Native Genfocus nodes (diffusers-based, full implementation)
+# DIAGNOSTIC: Catch ALL exceptions during native node import so any silent
+# failure surfaces with a full traceback instead of being hidden.
+NATIVE_GENFOCUS_AVAILABLE = False
+COMPONENT_LOADER_AVAILABLE = False
 try:
     from .nodes.genfocus_loader import GenfocusModelLoader, GenfocusSwitchAdapter, GenfocusUnloadModels
     from .nodes.genfocus_generate import (
@@ -86,10 +91,21 @@ try:
         GenfocusBokeh,
     )
     NATIVE_GENFOCUS_AVAILABLE = True
-except ImportError as e:
-    print(f"[Refocus] Native Genfocus nodes not available: {e}")
+    print("[Refocus] Native Genfocus nodes imported OK")
+except Exception as e:
+    print(f"[Refocus] !! Native Genfocus nodes FAILED to import: {type(e).__name__}: {e}")
     print("[Refocus] Install diffusers, peft, accelerate for full Genfocus support")
-    NATIVE_GENFOCUS_AVAILABLE = False
+    traceback.print_exc()
+
+# Component loader is independent - try it separately so a failure here
+# doesn't take down the rest of the native nodes.
+try:
+    from .nodes.component_loader import GenfocusComponentLoader
+    COMPONENT_LOADER_AVAILABLE = True
+    print("[Refocus] Component loader imported OK")
+except Exception as e:
+    print(f"[Refocus] !! Component loader FAILED to import: {type(e).__name__}: {e}")
+    traceback.print_exc()
 
 NODE_CLASS_MAPPINGS = {
     # Depth Estimation (Standalone utility)
@@ -135,6 +151,10 @@ if NATIVE_GENFOCUS_AVAILABLE:
         "GenfocusBokehNative": GenfocusBokeh,
     })
 
+# Add component loader independently
+if COMPONENT_LOADER_AVAILABLE:
+    NODE_CLASS_MAPPINGS["GenfocusComponentLoader"] = GenfocusComponentLoader
+
 NODE_DISPLAY_NAME_MAPPINGS = {
     # Depth Estimation
     "DepthProModelLoader": "Load DepthPro Model",
@@ -178,5 +198,14 @@ if NATIVE_GENFOCUS_AVAILABLE:
         "GenfocusDeblurNative": "Genfocus Deblur (Native)",
         "GenfocusBokehNative": "Genfocus Bokeh (Native)",
     })
+
+if COMPONENT_LOADER_AVAILABLE:
+    NODE_DISPLAY_NAME_MAPPINGS["GenfocusComponentLoader"] = "Genfocus Model Loader (Components)"
+
+# Final diagnostic - confirms what's actually registered
+print(f"[Refocus] Registered {len(NODE_CLASS_MAPPINGS)} node(s). "
+      f"Component loader present: {COMPONENT_LOADER_AVAILABLE}")
+if COMPONENT_LOADER_AVAILABLE:
+    print("[Refocus] -> 'Genfocus Model Loader (Components)' should now be in the menu")
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]

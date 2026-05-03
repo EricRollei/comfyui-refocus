@@ -10,6 +10,7 @@ Transform any photo into a professional-looking image with controllable depth-of
 - **BokehNet**: Generate realistic depth-of-field effects with controllable focus
 - **DepthPro**: High-quality metric depth estimation (Apple ml-depth-pro)
 - **Depth Utilities**: Convert between depth formats, focal length calculations
+- **Single-file FLUX support**: Component loader for Civitai-style checkpoints (no diffusers folder required)
 
 ---
 
@@ -31,7 +32,7 @@ This workflow demonstrates the complete refocusing pipeline: deblur an image fir
 ![Refocus Workflow](workflows/Refocus-Eric-1225.png)
 
 #### Input Image
-The starting image was generated with Hunyuan Image 3 (NF4). It has a soft, natural background blur — similar to what you'd get from a small format camera at f/8.
+The starting image was generated with Hunyuan Image 3 (NF4). It has a soft, natural background blur - similar to what you'd get from a small format camera at f/8.
 
 ![Input Image](workflows/HunyuanImage3_2025-12-11_17-30-15_000.png)
 
@@ -39,13 +40,13 @@ The starting image was generated with Hunyuan Image 3 (NF4). It has a soft, natu
 
 | Result | Description |
 |--------|-------------|
-| ![Deblurred](workflows/HunyuanImage3_2025-12-11_17-30-15_000_deblur.png) | **Deblurred** — Extended depth of field from foreground to infinity. Notice how both the subject and background are now sharp. |
-| ![Refocus 1](workflows/Refocused_2025-12-30_03-12-45_000_refocus1.png) | **Refocus 1** — Focus on subject's face using a small mask mark. The background is blurred to make the subject stand out. Adjust `blur_strength` and `max_coc` for more dramatic separation. |
-| ![Refocus 2](workflows/Refocused_2025-12-30_03-12-45_000_refocus2.png) | **Refocus 2** — Creative example: focus shifted to the 2nd car in the background. The subject is now artistically blurred. |
+| ![Deblurred](workflows/HunyuanImage3_2025-12-11_17-30-15_000_deblur.png) | **Deblurred** - Extended depth of field from foreground to infinity. Notice how both the subject and background are now sharp. |
+| ![Refocus 1](workflows/Refocused_2025-12-30_03-12-45_000_refocus1.png) | **Refocus 1** - Focus on subject's face using a small mask mark. The background is blurred to make the subject stand out. Adjust `blur_strength` and `max_coc` for more dramatic separation. |
+| ![Refocus 2](workflows/Refocused_2025-12-30_03-12-45_000_refocus2.png) | **Refocus 2** - Creative example: focus shifted to the 2nd car in the background. The subject is now artistically blurred. |
 
 #### Key Concepts
 
-- **Deblur** sharpens everything — extends depth of field from foreground to infinity
+- **Deblur** sharpens everything - extends depth of field from foreground to infinity
 - **Refocus** shifts the focal plane to wherever you mark with a mask or set with [x,y] coordinates
 - `max_coc` and `blur_strength` in the Compute Defocus node control how much blur is applied outside the depth of field
 
@@ -57,7 +58,7 @@ The starting image was generated with Hunyuan Image 3 (NF4). It has a soft, natu
 - `Deblur_Eric_1225_simple.json` / `Deblur_Eric_1225_simple.png` (workflow)
 - Input: `HunyuanImage3_2025-12-20_00-59-02_000.png`
 
-A minimal workflow for deblurring images with very few adjustable parameters — perfect for automation or batch processing.
+A minimal workflow for deblurring images with very few adjustable parameters - perfect for automation or batch processing.
 
 #### Workflow Diagram
 ![Deblur Simple Workflow](workflows/Deblur_Eric_1225_simple.png)
@@ -74,7 +75,7 @@ A minimal workflow for deblurring images with very few adjustable parameters —
 - The input image (generated with Hunyuan Image 3) has a subtle, natural-looking background blur
 - The deblurred result brings both foreground and background elements into sharp focus
 - For additional sharpening, consider using a Richardson-Lucy deconvolution node as a final step (after upscaling)
-- **Minimal configuration required** — great for automation pipelines
+- **Minimal configuration required** - great for automation pipelines
 - Works best with images around 1 megapixel (FLUX.1-dev native resolution), though FLUX handles larger sizes reasonably well
 - Increasing the number of steps can provide slight quality improvements
 
@@ -124,6 +125,27 @@ ComfyUI/
 │       └── depth_pro.pt             ← DepthPro weights
 ```
 
+### Alternative Setup: Component Files (no diffusers folder needed)
+
+If you have FLUX as separate files (Civitai-style) instead of the full diffusers folder, the **Genfocus Model Loader (Components)** node can assemble it from your existing ComfyUI text encoders and VAE - no ~23GB diffusers download required:
+
+```
+ComfyUI/
+├── models/
+│   ├── checkpoints/   (or unet/ or diffusion_models/)
+│   │   └── flux_dev_or_finetune.safetensors
+│   ├── text_encoders/ (or clip/)
+│   │   ├── t5xxl_fp16.safetensors
+│   │   └── clip_l.safetensors        ← standard CLIP-L (77 positions)
+│   ├── vae/
+│   │   └── ae.safetensors
+│   └── genfocus/
+│       ├── deblurNet.safetensors
+│       └── bokehNet.safetensors
+```
+
+On first use, the Component Loader downloads ~5MB of tokenizers and component configs from FLUX.1-schnell (Apache 2.0, non-gated) to `Refocus/.flux_cache/` and reuses them on subsequent runs.
+
 ### Download Links
 
 | Model | Size | License | Download |
@@ -154,6 +176,32 @@ Loads FLUX.1-dev with Genfocus LoRA adapters.
 | Output | Type | Description |
 |--------|------|-------------|
 | `pipeline` | GENFOCUS_PIPELINE | Loaded pipeline for generation |
+
+---
+
+### Genfocus Model Loader (Components)
+Loads FLUX from individual component files instead of a full diffusers folder. Use this when you have a Civitai-style single-file FLUX checkpoint and the standard ComfyUI text encoders/VAE - no need for the ~23GB diffusers FLUX download.
+
+Output is identical in shape to the Native loader, so all downstream Genfocus nodes work unchanged.
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `transformer` | dropdown | FLUX transformer .safetensors from checkpoints/, unet/, or diffusion_models/ |
+| `t5_encoder` | dropdown | T5-XXL .safetensors from text_encoders/ or clip/ (bf16/fp16 only - fp8 not supported) |
+| `clip_l_encoder` | dropdown | Standard CLIP-L .safetensors (77 positions; **not** clip_l_hidream or other extended-context variants) |
+| `vae` | dropdown | FLUX VAE .safetensors from vae/ (e.g. ae.safetensors) |
+| `precision` | dropdown | bf16 (recommended), fp16, fp32 |
+| `deblur_lora` | dropdown | DeblurNet LoRA from models/genfocus/ |
+| `bokeh_lora` | dropdown | BokehNet LoRA from models/genfocus/ |
+| `offload_to_cpu` | boolean | Enable CPU offloading to save VRAM |
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `pipeline` | GENFOCUS_PIPELINE | Loaded pipeline (same shape as Native loader) |
+
+**Compatibility caveat:** Genfocus LoRAs were trained on FLUX.1-dev. They will load on any FLUX-dev-architecture transformer (including Civitai fine-tunes), but **quality with stylized fine-tunes is untested - your mileage may vary.** Do not use FLUX.1-schnell (timestep distillation differs).
+
+**First run:** ~5MB of tokenizers and component configs are auto-downloaded from FLUX.1-schnell (Apache 2.0, non-gated) to `Refocus/.flux_cache/` and reused on subsequent runs.
 
 ---
 
@@ -548,6 +596,8 @@ The Genfocus bokeh network expects a **sharp input**. If you skip deblurring:
 | "FLUX model not found" | Place in `models/diffusers/FLUX.1-dev/` or use HF login |
 | "LoRA not loading" | Check files are in `models/genfocus/` folder |
 | Out of memory | Enable `offload_to_cpu` or use smaller resolution |
+| Component loader: "incompatible with FLUX" | The CLIP-L or T5 file you picked is for a different model (e.g. `clip_l_hidream` is for HiDream, not FLUX). Use a vanilla `clip_l.safetensors` with 77 positions, and a `t5xxl_*.safetensors` (not t5-base/large). |
+| Component loader: stale bytecode after updating Refocus | Delete `Refocus/pipeline/__pycache__/` and `Refocus/nodes/__pycache__/`, then restart ComfyUI. |
 
 ---
 
@@ -566,7 +616,7 @@ The Genfocus bokeh network expects a **sharp input**. If you skip deblurring:
 
 ### Why Diffusers Instead of Native ComfyUI FLUX?
 
-We initially attempted to create a native ComfyUI sampler that would allow using **any FLUX fine-tune** loaded in ComfyUI with Genfocus LoRAs. This would have been ideal — no need for a separate diffusers FLUX download, and compatibility with all FLUX variants.
+We initially attempted to create a native ComfyUI sampler that would allow using **any FLUX fine-tune** loaded in ComfyUI with Genfocus LoRAs. This would have been ideal - no need for a separate diffusers FLUX download, and compatibility with all FLUX variants.
 
 **The challenge:** Genfocus LoRAs were trained on the **diffusers FLUX architecture**, which uses separate Q, K, V projection layers:
 ```
@@ -587,6 +637,8 @@ Applying LoRA weights trained for separate Q/K/V to a fused layer requires:
 We implemented key mapping and offset-based patching using ComfyUI's built-in mechanisms, but the results showed characteristic spotted corruption patterns, indicating the LoRA weights weren't being applied correctly to the fused architecture.
 
 **Current status:** The native ComfyUI sampler approach is **abandoned for now**. The diffusers-based nodes work correctly because they use the exact architecture the LoRAs were trained on.
+
+The **Component Loader** is a partial answer: it lets users avoid the full ~23GB diffusers FLUX download by assembling a diffusers `FluxPipeline` from individual single-file checkpoints (Civitai-style transformer + standard ComfyUI text encoders + VAE). The pipeline still uses the diffusers architecture under the hood - it's just constructed from files most ComfyUI users already have.
 
 **Future possibility:** If someone trains Genfocus-style LoRAs directly on ComfyUI's FLUX architecture, or develops proper weight conversion utilities, native sampling could become viable.
 

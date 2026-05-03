@@ -494,6 +494,17 @@ class GenfocusUnloadModels:
                 GenfocusDeblurLoader._cached_config = None
                 cleared.append("GenfocusDeblurLoader")
             
+            # Clear component loader cache (lazy import avoids circular dep at module load)
+            try:
+                from .component_loader import GenfocusComponentLoader
+                if GenfocusComponentLoader._cached_pipeline is not None:
+                    del GenfocusComponentLoader._cached_pipeline
+                    GenfocusComponentLoader._cached_pipeline = None
+                    GenfocusComponentLoader._cached_config = None
+                    cleared.append("GenfocusComponentLoader")
+            except ImportError:
+                pass
+            
             if cleared:
                 status_parts.append(f"Cleared Genfocus: {', '.join(cleared)}")
                 print(f"[Unload] Cleared Genfocus pipelines: {', '.join(cleared)}")

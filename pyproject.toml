@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-refocus"
-version = "0.1.0"
+version = "0.1.2"
 description = "ComfyUI nodes for Generative Refocusing - Deblurring and Bokeh generation using FLUX LoRA adapters based on Genfocus"
 readme = "README.md"
 license = { text = "Apache-2.0" }
