@@ -1,5 +1,15 @@
 # Refocus - ComfyUI Nodes for Generative Refocusing
 
+## What's New — May 4, 2026 (v0.1.2)
+
+**Genfocus Model Loader (Components)** — no full 23GB diffusers FLUX folder required!
+
+Use your existing Civitai-style single-file FLUX checkpoint together with the standard ComfyUI text encoders and VAE. The new loader assembles a complete `FluxPipeline` from those individual files and works identically to the original Native loader for all downstream Genfocus nodes.
+
+![Component Loader Node](workflows/new-component-loader-node.png)
+
+---
+
 ComfyUI custom nodes for the [Genfocus](https://github.com/rayray9999/Genfocus) generative refocusing pipeline.
 
 Transform any photo into a professional-looking image with controllable depth-of-field (bokeh) effects!
